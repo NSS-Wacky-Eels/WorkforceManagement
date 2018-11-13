@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 using Dapper;
+using AngleSharp.Dom;
 
 namespace BangazonWorkforce.IntegrationTests
 {
@@ -152,6 +153,38 @@ namespace BangazonWorkforce.IntegrationTests
             {
                 Assert.False(cb.IsChecked);
             }
+        }
+
+        // Ticket 3 Get known employee from index list and inserted Fred Jackson in the sql statemnt
+        [Fact]
+        public async Task Get_IndexDisplayEmployees()
+        {
+            // Arrange
+            string url = "/employee";
+
+            // Act
+            HttpResponseMessage response = await _client.GetAsync(url);
+
+            // Assert
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            Assert.Equal("text/html; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
+
+            IHtmlDocument indexPage = await HtmlHelpers.GetDocumentAsync(response);
+            IHtmlCollection<IElement> tds = indexPage.QuerySelectorAll("td");
+            Assert.Contains(tds, td => td.TextContent.Trim() == "Fred");
+            Assert.Contains(tds, td => td.TextContent.Trim() == "Jackson");
+            Assert.Contains(tds, td => td.TextContent.Trim() == "Music");
+
+            /*
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            Assert.Equal("text/html; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
+
+            IHtmlDocument indexPage = await HtmlHelpers.GetDocumentAsync(response);
+            IHtmlCollection<IElement> tds = indexPage.QuerySelectorAll("td");
+            Assert.Contains(tds, td => td.TextContent.Trim() == "Ryan");
+            */
         }
 
         private async Task<List<Employee>> GetAllEmloyees()
