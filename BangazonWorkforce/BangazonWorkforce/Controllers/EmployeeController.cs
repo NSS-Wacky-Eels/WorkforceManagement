@@ -31,16 +31,17 @@ namespace BangazonWorkforce.Controllers
         {
             using (IDbConnection conn = Connection)
             {
-                string sql = @"SELECT e.Id, 
-                                      e.FirstName,
-                                      e.LastName, 
-                                      e.IsSupervisor,
-                                      e.DepartmentId,
-                                      d.Id,
-                                      d.Name,
-                                      d.Budget
-                                 FROM Employee e JOIN Department d on e.DepartmentId = d.Id
-                             ORDER BY e.Id";
+                string sql = @"
+                    SELECT e.Id, 
+                        e.FirstName,
+                        e.LastName, 
+                        e.IsSupervisor,
+                        e.DepartmentId,
+                        d.Id,
+                        d.Name,
+                        d.Budget
+                    FROM Employee e JOIN Department d on e.DepartmentId = d.Id
+                    ORDER BY e.Id";
                 IEnumerable<Employee> employees = await conn.QueryAsync<Employee, Department, Employee>(
                     sql,
                     (employee, department) => {
@@ -64,7 +65,45 @@ namespace BangazonWorkforce.Controllers
             {
                 return NotFound();
             }
-            return View(employee);
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"
+                    SELECT
+                        e.Id,
+                        e.FirstName,
+                        e.LastName,
+                        e.DepartmentId,
+                        e.IsSuperVisor,
+                        c.Id,
+                        c.Manufacturer,
+                        c.Make,
+                        c.PurchaseDate,
+                        c.DecomissionDate,
+                        d.Id,
+                        d.[Name],
+                        tp.Id,
+                        tp.[Name],
+                        tp.StartDate,
+                        tp.EndDate,
+                        tp.MaxAttendees
+                    FROM Employee e
+                    LEFT JOIN ComputerEmployee ce ON ce.EmployeeId = e.Id
+                    LEFT JOIN Computer c ON c.Id = ce.ComputerId
+                    LEFT JOIN EmployeeTraining empT ON empT.EmployeeId = e.Id 
+                    LEFT JOIN TrainingProgram tp ON tp.Id = empT.TrainingProgramId
+                    JOIN Department d ON d.Id = e.DepartmentId 
+                    WHERE e.Id = {id}
+                    ";
+                IEnumerable<Employee> employees = await conn.QueryAsync<Employee, Department, Employee>(
+                    sql,
+                    (emp, department) =>
+                    {
+                        emp.Department = department;
+                        return emp;
+                    });
+
+                return View(employees);
+            }
         }
 
         // GET: Employee/Create

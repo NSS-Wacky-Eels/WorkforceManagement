@@ -40,7 +40,6 @@ DROP TABLE IF EXISTS Product;
 DROP TABLE IF EXISTS ProductType;
 DROP TABLE IF EXISTS Customer;
 
-
 CREATE TABLE Department (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	[Name] VARCHAR(55) NOT NULL,
@@ -56,10 +55,13 @@ CREATE TABLE Employee (
     CONSTRAINT FK_EmployeeDepartment FOREIGN KEY(DepartmentId) REFERENCES Department(Id)
 );
 
+
 CREATE TABLE Computer (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	PurchaseDate DATETIME NOT NULL,
-	DecomissionDate DATETIME
+	DecomissionDate DATETIME,
+	Make VARCHAR(55) NOT NULL,
+	Manufacturer VARCHAR(55) NOT NULL
 );
 
 CREATE TABLE ComputerEmployee (
@@ -72,9 +74,9 @@ CREATE TABLE ComputerEmployee (
     CONSTRAINT FK_ComputerEmployee_Computer FOREIGN KEY(ComputerId) REFERENCES Computer(Id)
 );
 
-
 CREATE TABLE TrainingProgram (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
+	[Name] VARCHAR(255) NOT NULL,
 	StartDate DATETIME NOT NULL,
 	EndDate DATETIME NOT NULL,
 	MaxAttendees INTEGER NOT NULL
@@ -337,29 +339,29 @@ VALUES
 
 
 INSERT INTO Computer 
-(PurchaseDate, DecomissionDate) 
+(PurchaseDate, DecomissionDate, Make, Manufacturer) 
 VALUES 
-('170421 10:34:09 AM', null);
+('170421 10:34:09 AM', null, 'Mac Book Air', 'Apple');
 
 INSERT INTO Computer 
-(PurchaseDate, DecomissionDate) 
+(PurchaseDate, DecomissionDate, Make, Manufacturer) 
 VALUES 
-('170422 10:34:09 AM', null);
+('170422 10:34:09 AM', null, 'PC', 'Windows');
 
 INSERT INTO Computer 
-(PurchaseDate, DecomissionDate) 
+(PurchaseDate, DecomissionDate, Make, Manufacturer) 
 VALUES 
-('170423 10:34:09 AM', null);
+('170423 10:34:09 AM', null, 'Mac Book Pro', 'Apple');
 
 INSERT INTO Computer 
-(PurchaseDate, DecomissionDate)
+(PurchaseDate, DecomissionDate, Make, Manufacturer)
 VALUES 
-('170424 10:34:09 AM', null);
+('170424 10:34:09 AM', null, 'Mac Book Air 2', 'Apple');
 
 INSERT INTO Computer 
-(PurchaseDate, DecomissionDate) 
+(PurchaseDate, DecomissionDate, Make, Manufacturer) 
 VALUES 
-('170425 10:34:09 AM', null);
+('170425 10:34:09 AM', null, 'Serface', 'Windows');
 
 INSERT INTO ComputerEmployee 
 (EmployeeId, ComputerId, AssignDate)
@@ -388,6 +390,36 @@ VALUES
 
 
 INSERT INTO TrainingProgram 
-(StartDate, EndDate, MaxAttendees) 
+([Name], StartDate, EndDate, MaxAttendees) 
 VALUES 
-('170425 10:34:09 AM', '180618 10:34:09 AM', 15);
+('Do not be an asshole', '170418 10:34:09 AM', '180618 10:34:09 AM', 15);
+
+INSERT INTO TrainingProgram 
+([Name], StartDate, EndDate, MaxAttendees) 
+VALUES 
+('Cat cuddling techniques', '170417 07:34:09 AM', '080917 10:34:09 AM', 25);
+
+INSERT INTO TrainingProgram 
+([Name], StartDate, EndDate, MaxAttendees) 
+VALUES 
+('Coffee drinkers anonymous', '170418 12:34:09 AM', '100618 10:34:09 AM', 30);
+
+INSERT INTO EmployeeTraining
+(EmployeeId, TrainingProgramId)
+VALUES 
+(1, 1);
+
+INSERT INTO EmployeeTraining
+(EmployeeId, TrainingProgramId)
+VALUES 
+(2, 2);
+
+INSERT INTO EmployeeTraining
+(EmployeeId, TrainingProgramId)
+VALUES 
+(1, 2);
+
+INSERT INTO EmployeeTraining
+(EmployeeId, TrainingProgramId)
+VALUES 
+(3, 3);

@@ -1,4 +1,4 @@
-﻿@model BangazonWorkforce.Models.Employee
+﻿@model BangazonWorkforce.Models.ViewModels.EmployeeDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -23,23 +23,10 @@
             @Html.DisplayFor(model => model.LastName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.IsSupervisor)
+            @Html.DisplayNameFor(model => model.department.Id)
         </dt>
         <dd>
-            @if (!Model.IsSupervisor)
-            {
-                <span>Yes</span>
-            }
-            else
-            {
-                <span>No</span>
-            }
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.DepartmentId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Department.Name)
+            @Html.DisplayFor(model => model.department.Name)
         </dd>
     </dl>
 </div>
