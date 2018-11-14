@@ -80,12 +80,12 @@ namespace BangazonWorkforce.IntegrationTests
             Assert.Contains(
                 lastRow.QuerySelectorAll("td"),
                 td => td.TextContent.Contains(newLastName));
-                /*
+                
             Assert.Contains(
                 lastRow.QuerySelectorAll("td"),
                 td => td.TextContent.Contains(departmentName));
-                */
-                /*
+                
+               
             IHtmlInputElement cb = (IHtmlInputElement)lastRow.QuerySelector("input[type='checkbox']");
             if (isSupervisor == "true")
             {
@@ -94,7 +94,7 @@ namespace BangazonWorkforce.IntegrationTests
             else
             {
                 Assert.False(cb.IsChecked);
-            } */
+            } 
         }
 
         [Fact]

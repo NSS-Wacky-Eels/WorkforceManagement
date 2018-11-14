@@ -17,11 +17,6 @@ namespace BangazonWorkforce.Models
                     return null;
                 }
 
-/*
-                SelectListItem item = new SelectListItem{
-                    Text = "Choose Depo",
-                    Value = "0"
-                }; */
                
                var allDepoList = AllDepartments
                         .Select((d, id) => new SelectListItem(d.Name, d.Id.ToString())).ToList();
