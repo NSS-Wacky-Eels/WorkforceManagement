@@ -6,7 +6,7 @@ Bangazon is an e-commerce store where users are able to buy and sell products. T
 
 ----
 ## Feature List :star:
-1. Users can create, edit and delete departments.
+1. Update for ticket 1: Users can create, edit and delete departments.
 
 ----
 ## Software Dependencies :space_invader:
