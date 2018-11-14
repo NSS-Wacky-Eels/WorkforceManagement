@@ -70,9 +70,9 @@ http://localhost:5000/api/[name]/[id]
 
 ## Contributers
 
-* **Kayla Reid** - [ricky-bruner](https://github.com/KaylaReid)
-* **Taylor Gulley** - [KHardt](https://github.com/taylorlgulley)
-* **Alejandro Font** - [jeremiah3643](https://github.com/alexfont321)
+* **Kayla Reid** - [KaylaReid](https://github.com/KaylaReid)
+* **Taylor Gulley** - [taylorlgulley](https://github.com/taylorlgulley)
+* **Alejandro Font** - [alexfont321](https://github.com/alexfont321)
 * **Mike Parrish** - [thatmikeparrish](https://github.com/thatmikeparrish)
 
 ----
