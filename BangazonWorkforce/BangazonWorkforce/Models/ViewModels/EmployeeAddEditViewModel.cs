@@ -24,7 +24,7 @@ namespace BangazonWorkforce.Models
                 }; */
                
                var allDepoList = AllDepartments
-                        .Select((d, id) => new SelectListItem(d.Name, (id +1).ToString())).ToList();
+                        .Select((d, id) => new SelectListItem(d.Name, d.Id.ToString())).ToList();
 
 
                 allDepoList.Insert(0, new SelectListItem {
