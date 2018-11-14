@@ -118,7 +118,7 @@ namespace BangazonWorkforce.Controllers
             {
                 string sql = $@"UPDATE Department 
                                    SET Name = '{department.Name}', 
-                                       Budget = {department.Id}
+                                       Budget = {department.Budget}
                                  WHERE id = {id}";
 
                 await conn.ExecuteAsync(sql);
@@ -130,17 +130,29 @@ namespace BangazonWorkforce.Controllers
         // GET: Department/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            string sql = $@"
+            SELECT
+                d.Id,
+                d.Name,
+                d.Budget
+            FROM Department d
+            WHERE d.Id = {id}
+            ";
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            Department department = await GetById(id.Value);
-            if (department == null)
+            using (IDbConnection conn = Connection)
             {
-                return NotFound();
+                Department department = await GetById(id.Value);
+                if (department == null)
+                {
+                    return NotFound();
+                }
+                return View(department);
             }
-            return View(department);
         }
 
         // POST: Department/Delete/5
@@ -148,17 +160,18 @@ namespace BangazonWorkforce.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            string sql = $@"DELETE FROM Department WHERE id = {id}";
+
             using (IDbConnection conn = Connection)
             {
-                string sql = $@"DELETE FROM Department WHERE id = {id}";
                 int rowsDeleted = await conn.ExecuteAsync(sql);
                 
                 if (rowsDeleted > 0)
                 {
-                    return NotFound();
+                    return RedirectToAction(nameof(Index));
                 }
 
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
         }
 
