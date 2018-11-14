@@ -5,6 +5,10 @@
 Bangazon is an e-commerce store where users are able to buy and sell products. Think Etsy meets Craigslist. 
 
 ----
+## Feature List :star:
+1. Users can create, edit and delete departments.
+
+----
 ## Software Dependencies :space_invader:
 
 [SSMS](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-2017), 
