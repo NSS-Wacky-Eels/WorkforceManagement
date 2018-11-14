@@ -22,23 +22,33 @@
             @Html.DisplayFor(model => model.LastName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.department.Id)
+            @Html.DisplayNameFor(model => model.DepartmentName)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.department.Name)
+            @Html.DisplayFor(model => model.DepartmentName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.computer.Id)
+            @Html.DisplayNameFor(model => model.ComputerMake)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.computer.Make)
+            @Html.DisplayFor(model => model.ComputerMake)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.trainingProgram.Id)
+            @Html.DisplayNameFor(model => model.ComputerManufacturer)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.trainingProgram.Name)
+            @Html.DisplayFor(model => model.ComputerManufacturer)
         </dd>
+
+        @foreach(var tp1 in Model.TrainingPrograms)
+        {
+            <dt>
+                @Html.DisplayNameFor(modelItem => tp1.Name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(modelItem => tp1.Name)
+            </dd>
+        }
     </dl>
 </div>
 <div>

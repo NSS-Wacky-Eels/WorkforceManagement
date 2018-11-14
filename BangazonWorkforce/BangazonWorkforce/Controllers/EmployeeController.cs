@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using BangazonWorkforce.Models;
+using BangazonWorkforce.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Dapper;
@@ -68,46 +69,66 @@ namespace BangazonWorkforce.Controllers
             using (IDbConnection conn = Connection)
             {
                 string sql = $@"
-                    SELECT
-                        e.Id,
-                        e.FirstName,
-                        e.LastName,
-                        e.DepartmentId,
-                        e.IsSuperVisor,
-                        c.Id,
-                        c.Manufacturer,
-                        c.Make,
-                        c.PurchaseDate,
-                        c.DecomissionDate,
-                        d.Id,
-                        d.[Name],
-                        tp.Id,
-                        tp.[Name],
-                        tp.StartDate,
-                        tp.EndDate,
-                        tp.MaxAttendees
-                    FROM Employee e
-                    LEFT JOIN ComputerEmployee ce ON ce.EmployeeId = e.Id
-                    LEFT JOIN Computer c ON c.Id = ce.ComputerId
-                    LEFT JOIN EmployeeTraining empT ON empT.EmployeeId = e.Id 
-                    LEFT JOIN TrainingProgram tp ON tp.Id = empT.TrainingProgramId
-                    JOIN Department d ON d.Id = e.DepartmentId 
-                    WHERE e.Id = {id}
+                     SELECT
+                            e.Id,
+                            e.FirstName,
+                            e.LastName,
+                            e.DepartmentId,
+                            e.IsSuperVisor,
+                            c.Id,
+                            c.Manufacturer,
+                            c.Make,
+                            c.PurchaseDate,
+                            c.DecomissionDate,
+                            d.Id,
+                            d.[Name],
+                            tp.Id,
+                            tp.[Name],
+                            tp.StartDate,
+                            tp.EndDate,
+                            tp.MaxAttendees
+                        FROM Employee e
+                        JOIN ComputerEmployee ce ON ce.EmployeeId = e.Id
+                        JOIN Computer c ON c.Id = ce.ComputerId
+                        LEFT JOIN EmployeeTraining empT ON empT.EmployeeId = e.Id 
+                        LEFT JOIN TrainingProgram tp ON tp.Id = empT.TrainingProgramId
+                        JOIN Department d ON d.Id = e.DepartmentId 
+                        WHERE e.Id = {id}                   
                     ";
+
+                Console.WriteLine(sql);
 
                 //need to add stuff like <Employee, Computer, TrainingProgram, Department, Employee>
                 //right below 
-                IEnumerable<Employee> employees = await conn.QueryAsync<Employee, Department, Computer, TrainingProgram, Employee>(
-                    sql,
-                    (emp, department, computer, trainingProgram) =>
-                    {
-                        emp.Department = department;
-                        emp.Computer = computer;
-                        emp.TrainingProgram = trainingProgram;
-                        return emp;
-                    });
+                Employee employeeDetails = new Employee();
 
-                return View(employees);
+                IEnumerable<Employee> queriedEmployee = await conn.QueryAsync<Employee, Computer, Department, TrainingProgram, Employee>(
+                    sql,
+                    (emp, computer, department, trainingProgram) =>
+                    {
+
+                        if (employeeDetails.Department == null)
+                        {
+                            employeeDetails = emp;
+                            employeeDetails.Department = department;
+                            employeeDetails.Computer = computer;
+                        }
+                  
+                        if (!employeeDetails.TrainingPrograms.Contains(trainingProgram))
+                        {
+                            employeeDetails.TrainingPrograms.Add(trainingProgram);
+                        }
+          
+                    return emp;
+                    });
+                EmployeeDetailsViewModel model = new EmployeeDetailsViewModel();
+                model.FirstName = employeeDetails.FirstName;
+                model.LastName = employeeDetails.LastName;
+                model.DepartmentName = employeeDetails.Department.Name;
+                model.ComputerMake = employeeDetails.Computer.Make;
+                model.ComputerManufacturer = employeeDetails.Computer.Manufacturer;
+                model.TrainingPrograms = employeeDetails.TrainingPrograms;
+                return View(model);
             }
         }
 

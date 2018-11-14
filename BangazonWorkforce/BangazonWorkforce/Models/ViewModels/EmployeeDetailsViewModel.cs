@@ -13,10 +13,12 @@ namespace BangazonWorkforce.Models.ViewModels
 
         public string LastName { get; set; }
 
-        public Department department { get; set; }
+        public string DepartmentName { get; set; }
 
-        public Computer computer { get; set; }
+        public string ComputerMake { get; set; }
 
-        public TrainingProgram trainingProgram { get; set; }
+        public string ComputerManufacturer { get; set; }
+
+        public List<TrainingProgram> TrainingPrograms = new List<TrainingProgram>();
     }
 }
