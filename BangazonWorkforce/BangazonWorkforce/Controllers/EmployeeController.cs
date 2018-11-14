@@ -94,11 +94,16 @@ namespace BangazonWorkforce.Controllers
                     JOIN Department d ON d.Id = e.DepartmentId 
                     WHERE e.Id = {id}
                     ";
-                IEnumerable<Employee> employees = await conn.QueryAsync<Employee, Department, Employee>(
+
+                //need to add stuff like <Employee, Computer, TrainingProgram, Department, Employee>
+                //right below 
+                IEnumerable<Employee> employees = await conn.QueryAsync<Employee, Department, Computer, TrainingProgram, Employee>(
                     sql,
-                    (emp, department) =>
+                    (emp, department, computer, trainingProgram) =>
                     {
                         emp.Department = department;
+                        emp.Computer = computer;
+                        emp.TrainingProgram = trainingProgram;
                         return emp;
                     });
 

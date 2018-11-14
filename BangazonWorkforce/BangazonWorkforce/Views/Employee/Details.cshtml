@@ -1,5 +1,4 @@
 ﻿@model BangazonWorkforce.Models.ViewModels.EmployeeDetailsViewModel
-
 @{
     ViewData["Title"] = "Details";
 }
@@ -27,6 +26,18 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.department.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.computer.Id)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.computer.Make)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.trainingProgram.Id)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.trainingProgram.Name)
         </dd>
     </dl>
 </div>
