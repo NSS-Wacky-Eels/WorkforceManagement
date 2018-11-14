@@ -17,15 +17,25 @@ namespace BangazonWorkforce.Models
                     return null;
                 }
 
-
-
-               return AllDepartments
+/*
+                SelectListItem item = new SelectListItem{
+                    Text = "Choose Depo",
+                    Value = "0"
+                }; */
+               
+               var allDepoList = AllDepartments
                         .Select((d, id) => new SelectListItem(d.Name, (id +1).ToString())).ToList();
 
 
-                 
+                allDepoList.Insert(0, new SelectListItem {
+                    Text = "Choose Depo",
+                    Value = "0"
+                });
+
+                return allDepoList;
 
             }
         }
+
     }
 }
