@@ -130,15 +130,6 @@ namespace BangazonWorkforce.Controllers
         // GET: Department/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            string sql = $@"
-            SELECT
-                d.Id,
-                d.Name,
-                d.Budget
-            FROM Department d
-            WHERE d.Id = {id}
-            ";
-
             if (id == null)
             {
                 return NotFound();
