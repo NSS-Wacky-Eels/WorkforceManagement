@@ -118,7 +118,7 @@ namespace BangazonWorkforce.Controllers
             {
                 string sql = $@"UPDATE Department 
                                    SET Name = '{department.Name}', 
-                                       Budget = {department.Id}
+                                       Budget = {department.Budget}
                                  WHERE id = {id}";
 
                 await conn.ExecuteAsync(sql);
@@ -155,10 +155,10 @@ namespace BangazonWorkforce.Controllers
                 
                 if (rowsDeleted > 0)
                 {
-                    return NotFound();
+                    return RedirectToAction(nameof(Index));
                 }
 
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
         }
 
