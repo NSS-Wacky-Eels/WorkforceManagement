@@ -10,6 +10,8 @@ Bangazon is an e-commerce store where users are able to buy and sell products. T
 3. Update for ticket 3: Users can view list of Employees with their First and Last Name as well as Department Name.
 4. Udate for ticket 4: Users can view employee details and see employee computer and training programs.
 
+
+
 ----
 ## Software Dependencies :space_invader:
 
