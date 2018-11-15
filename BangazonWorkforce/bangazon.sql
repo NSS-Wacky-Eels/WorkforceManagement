@@ -335,6 +335,11 @@ INSERT INTO Employee
 VALUES 
 ('Andy', 'Collins', 2, 'true');
 
+INSERT INTO Employee 
+(FirstName, LastName, DepartmentId, IsSuperVisor) 
+VALUES 
+('Fred', 'Jackson', 2, 'false');
+
 
 INSERT INTO Computer 
 (PurchaseDate, DecomissionDate) 
