@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Dapper;
 using AngleSharp.Dom;
+using System.Diagnostics;
 
 namespace BangazonWorkforce.IntegrationTests
 {
@@ -191,6 +192,7 @@ namespace BangazonWorkforce.IntegrationTests
             }
         }
 
+
         private async Task<List<Department>> GetAllDepartments()
         {
             using (IDbConnection conn = new SqlConnection(Config.ConnectionSring))
@@ -200,5 +202,31 @@ namespace BangazonWorkforce.IntegrationTests
                 return allDepartments.ToList();
             }
         }
+
+        [Fact]
+        public async Task Get_EmployeeDetails()
+        {
+            // Arrange
+            string url = "/employee/details/1";
+
+            // Act
+            HttpResponseMessage response = await _client.GetAsync(url);
+
+            // Assert
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            Assert.Equal("text/html; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
+
+                
+            IHtmlDocument detailPage = await HtmlHelpers.GetDocumentAsync(response);
+            IHtmlCollection<IElement> dds = detailPage.QuerySelectorAll("dd");
+            Assert.Contains(dds, dd => dd.TextContent.Trim() == "Mike"); 
+            Assert.Contains(dds, dd => dd.TextContent.Trim() == "Parrish");
+            Assert.Contains(dds, dd => dd.TextContent.Trim() == "Navy");
+          /*  Assert.Contains(dds, dd => dd.TextContent.Trim() == "Windows");
+            Assert.Contains(dds, dd => dd.TextContent.Trim() == "Serface");*/
+            Assert.Contains(dds, dd => dd.TextContent.Trim() == "Do not be an asshole");
+        }
+
    }
 }
