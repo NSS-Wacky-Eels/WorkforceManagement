@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using BangazonWorkforce.Models;
+using BangazonWorkforce.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Dapper;
@@ -31,16 +32,17 @@ namespace BangazonWorkforce.Controllers
         {
             using (IDbConnection conn = Connection)
             {
-                string sql = @"SELECT e.Id, 
-                                      e.FirstName,
-                                      e.LastName, 
-                                      e.IsSupervisor,
-                                      e.DepartmentId,
-                                      d.Id,
-                                      d.Name,
-                                      d.Budget
-                                 FROM Employee e JOIN Department d on e.DepartmentId = d.Id
-                             ORDER BY e.Id";
+                string sql = @"
+                    SELECT e.Id, 
+                        e.FirstName,
+                        e.LastName, 
+                        e.IsSupervisor,
+                        e.DepartmentId,
+                        d.Id,
+                        d.Name,
+                        d.Budget
+                    FROM Employee e JOIN Department d on e.DepartmentId = d.Id
+                    ORDER BY e.Id";
                 IEnumerable<Employee> employees = await conn.QueryAsync<Employee, Department, Employee>(
                     sql,
                     (employee, department) => {
@@ -64,7 +66,62 @@ namespace BangazonWorkforce.Controllers
             {
                 return NotFound();
             }
-            return View(employee);
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"
+                     SELECT
+                            e.Id,
+                            e.FirstName,
+                            e.LastName,
+                            e.DepartmentId,
+                            e.IsSuperVisor,
+                            c.Id,
+                            c.Manufacturer,
+                            c.Make,
+                            c.PurchaseDate,
+                            c.DecomissionDate,
+                            d.Id,
+                            d.[Name],
+                            tp.Id,
+                            tp.[Name],
+                            tp.StartDate,
+                            tp.EndDate,
+                            tp.MaxAttendees
+                        FROM Employee e
+                        JOIN ComputerEmployee ce ON ce.EmployeeId = e.Id
+                        JOIN Computer c ON c.Id = ce.ComputerId
+                        LEFT JOIN EmployeeTraining empT ON empT.EmployeeId = e.Id 
+                        LEFT JOIN TrainingProgram tp ON tp.Id = empT.TrainingProgramId
+                        JOIN Department d ON d.Id = e.DepartmentId 
+                        WHERE e.Id = {id}                   
+                    ";
+
+                EmployeeDetailsViewModel model = new EmployeeDetailsViewModel();
+
+                IEnumerable<Employee> queriedEmployee = await conn.QueryAsync<Employee, Computer, Department, TrainingProgram, Employee>(
+                    sql,
+                    (emp, computer, department, trainingProgram) =>
+                    {
+
+                        if (model.DepartmentName == null)
+                        {
+                            model.FirstName = emp.FirstName;
+                            model.LastName = emp.LastName;
+                            model.DepartmentName = department.Name;
+                            model.ComputerMake = computer.Make;
+                            model.ComputerManufacturer = computer.Manufacturer;
+                        }
+                  
+                        if (!model.TrainingPrograms.Contains(trainingProgram))
+                        {
+                            model.TrainingPrograms.Add(trainingProgram);
+                        }
+          
+                    return emp;
+                    });
+          
+                return View(model);
+            }
         }
 
         // GET: Employee/Create

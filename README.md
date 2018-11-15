@@ -5,6 +5,14 @@
 Bangazon is an e-commerce store where users are able to buy and sell products. Think Etsy meets Craigslist. 
 
 ----
+## Feature List :star:
+1. Update for ticket 1: Users can create, edit and delete departments.
+3. Update for ticket 3: Users can view list of Employees with their First and Last Name as well as Department Name.
+4. Udate for ticket 4: Users can view employee details and see employee computer and training programs.
+
+
+
+----
 ## Software Dependencies :space_invader:
 
 [SSMS](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-2017), 
@@ -70,9 +78,9 @@ http://localhost:5000/api/[name]/[id]
 
 ## Contributers
 
-* **Kayla Reid** - [ricky-bruner](https://github.com/KaylaReid)
-* **Taylor Gulley** - [KHardt](https://github.com/taylorlgulley)
-* **Alejandro Font** - [jeremiah3643](https://github.com/alexfont321)
+* **Kayla Reid** - [KaylaReid](https://github.com/KaylaReid)
+* **Taylor Gulley** - [taylorlgulley](https://github.com/taylorlgulley)
+* **Alejandro Font** - [alexfont321](https://github.com/alexfont321)
 * **Mike Parrish** - [thatmikeparrish](https://github.com/thatmikeparrish)
 
 ----
