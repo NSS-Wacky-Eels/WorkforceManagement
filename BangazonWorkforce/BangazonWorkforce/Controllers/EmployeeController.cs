@@ -96,38 +96,30 @@ namespace BangazonWorkforce.Controllers
                         WHERE e.Id = {id}                   
                     ";
 
-                Console.WriteLine(sql);
-
-                //need to add stuff like <Employee, Computer, TrainingProgram, Department, Employee>
-                //right below 
-                Employee employeeDetails = new Employee();
+                EmployeeDetailsViewModel model = new EmployeeDetailsViewModel();
 
                 IEnumerable<Employee> queriedEmployee = await conn.QueryAsync<Employee, Computer, Department, TrainingProgram, Employee>(
                     sql,
                     (emp, computer, department, trainingProgram) =>
                     {
 
-                        if (employeeDetails.Department == null)
+                        if (model.DepartmentName == null)
                         {
-                            employeeDetails = emp;
-                            employeeDetails.Department = department;
-                            employeeDetails.Computer = computer;
+                            model.FirstName = emp.FirstName;
+                            model.LastName = emp.LastName;
+                            model.DepartmentName = department.Name;
+                            model.ComputerMake = computer.Make;
+                            model.ComputerManufacturer = computer.Manufacturer;
                         }
                   
-                        if (!employeeDetails.TrainingPrograms.Contains(trainingProgram))
+                        if (!model.TrainingPrograms.Contains(trainingProgram))
                         {
-                            employeeDetails.TrainingPrograms.Add(trainingProgram);
+                            model.TrainingPrograms.Add(trainingProgram);
                         }
           
                     return emp;
                     });
-                EmployeeDetailsViewModel model = new EmployeeDetailsViewModel();
-                model.FirstName = employeeDetails.FirstName;
-                model.LastName = employeeDetails.LastName;
-                model.DepartmentName = employeeDetails.Department.Name;
-                model.ComputerMake = employeeDetails.Computer.Make;
-                model.ComputerManufacturer = employeeDetails.Computer.Manufacturer;
-                model.TrainingPrograms = employeeDetails.TrainingPrograms;
+          
                 return View(model);
             }
         }
