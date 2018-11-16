@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
+//Author: Kayla Reid
+//This ViewModel show and employee with department, computer and training program details
 namespace BangazonWorkforce.Models.ViewModels
 {
     public class EmployeeDetailsViewModel

@@ -53,7 +53,9 @@ namespace BangazonWorkforce.Controllers
                 return View(employees);
             }
         }
-
+        //Author: Kayla Reid
+            //Description:
+            //Returns a employee with department, computer, and training programs details from the database
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -88,8 +90,8 @@ namespace BangazonWorkforce.Controllers
                             tp.EndDate,
                             tp.MaxAttendees
                         FROM Employee e
-                        JOIN ComputerEmployee ce ON ce.EmployeeId = e.Id
-                        JOIN Computer c ON c.Id = ce.ComputerId
+                        LEFT JOIN ComputerEmployee ce ON ce.EmployeeId = e.Id
+                        LEFT JOIN Computer c ON c.Id = ce.ComputerId
                         LEFT JOIN EmployeeTraining empT ON empT.EmployeeId = e.Id 
                         LEFT JOIN TrainingProgram tp ON tp.Id = empT.TrainingProgramId
                         JOIN Department d ON d.Id = e.DepartmentId 
@@ -108,6 +110,10 @@ namespace BangazonWorkforce.Controllers
                             model.FirstName = emp.FirstName;
                             model.LastName = emp.LastName;
                             model.DepartmentName = department.Name;
+                        }
+
+                        if (computer != null)
+                        {
                             model.ComputerMake = computer.Make;
                             model.ComputerManufacturer = computer.Manufacturer;
                         }
