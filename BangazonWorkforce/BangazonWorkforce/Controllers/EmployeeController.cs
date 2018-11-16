@@ -107,6 +107,7 @@ namespace BangazonWorkforce.Controllers
 
                         if (model.DepartmentName == null)
                         {
+                            model.Id = emp.Id;
                             model.FirstName = emp.FirstName;
                             model.LastName = emp.LastName;
                             model.DepartmentName = department.Name;
