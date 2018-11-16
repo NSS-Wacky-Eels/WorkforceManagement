@@ -53,7 +53,9 @@ namespace BangazonWorkforce.Controllers
                 return View(employees);
             }
         }
-
+        //Author: Kayla Reid
+            //Description:
+            //Returns a employee with department, computer, and training programs details from the database
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
