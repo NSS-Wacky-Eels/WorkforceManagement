@@ -1,4 +1,4 @@
-﻿@model BangazonWorkforce.Models.Department
+﻿@model BangazonWorkforce.Models.ViewModels.DepartmentDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -25,17 +25,16 @@
         <dt>
             Employees
         </dt>
-        @foreach (var employee in Model.Employees)
-        {
-            <dd>
-                <ul>
+        <dd>
+            <ul>
+                @foreach (var employee in Model.AllEmployees)
+                {
                     <li>
-
                         @Html.DisplayFor(modelItem => employee.FirstName)
                     </li>
-                </ul>
-            </dd>
-        }
+                }
+            </ul>
+        </dd>
     </dl>
 </div>
 <div>

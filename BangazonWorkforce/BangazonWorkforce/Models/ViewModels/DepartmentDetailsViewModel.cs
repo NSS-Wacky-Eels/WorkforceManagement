@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BangazonWorkforce.Models.ViewModels
 {
@@ -11,6 +13,7 @@ namespace BangazonWorkforce.Models.ViewModels
 
         public int Budget { get; set; }
 
-        public List<Employee> Employees { get; set; }
+        public List<Employee> AllEmployees { get; set; } = new List<Employee>();
+
     }
 }
