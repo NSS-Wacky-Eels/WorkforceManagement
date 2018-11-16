@@ -39,6 +39,7 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        // Details Page
         public async Task<IActionResult> Details(int? id) 
         {
             if (id == null)
@@ -46,7 +47,7 @@ namespace BangazonWorkforce.Controllers
                 return NotFound();
             }
 
-            Department department = await GetById(id.Value);
+            DepartmentDetailsViewModel department = new DepartmentDetailsViewModel();
             if (department == null)
             {
                 return NotFound();
