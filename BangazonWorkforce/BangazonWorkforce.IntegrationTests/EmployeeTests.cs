@@ -223,8 +223,8 @@ namespace BangazonWorkforce.IntegrationTests
             Assert.Contains(dds, dd => dd.TextContent.Trim() == "Mike"); 
             Assert.Contains(dds, dd => dd.TextContent.Trim() == "Parrish");
             Assert.Contains(dds, dd => dd.TextContent.Trim() == "Navy");
-          /*  Assert.Contains(dds, dd => dd.TextContent.Trim() == "Windows");
-            Assert.Contains(dds, dd => dd.TextContent.Trim() == "Serface");*/
+            Assert.Contains(dds, dd => dd.TextContent.Trim() == "Windows");
+            Assert.Contains(dds, dd => dd.TextContent.Trim() == "Serface");
             Assert.Contains(dds, dd => dd.TextContent.Trim() == "Do not be an asshole");
         }
 
