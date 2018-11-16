@@ -26,12 +26,12 @@
             Employees
         </dt>
         <dd>
-            <ul>
+            <ul class="list-unstyled">
                 @foreach (var employee in Model.AllEmployees)
                 {
-                    <li>
-                        @Html.DisplayFor(modelItem => employee.FirstName)
-                    </li>
+                <li>
+                    @Html.DisplayFor(modelItem => employee.FirstName) @Html.DisplayFor(modelItem => employee.LastName)
+                </li>
                 }
             </ul>
         </dd>
