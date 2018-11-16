@@ -24,7 +24,7 @@ namespace BangazonWorkforce.Models
         [Required(ErrorMessage = "Please select which department this employee is assigned to")]
         [Display(Name = "Department")]
         public int DepartmentId { get; set; }
-
+    
         public Department Department { get; set; }
     }
 }
