@@ -12,7 +12,7 @@ namespace BangazonWorkforce.Models
 
         public Department department { get; set; }
 
-
+        public int employeeCount { get; set; }
 
     }
 }

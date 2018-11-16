@@ -27,16 +27,56 @@ namespace BangazonWorkforce.Controllers
             _config = config;
         }
 
+        
         public async Task<IActionResult> Index()
         {
+
             using (IDbConnection conn = Connection)
             {
-                string sql = "SELECT Id, Name, Budget FROM Department";
+                Dictionary<int, Department> report = new Dictionary<int, Department>();
+                DepartmentViewModel model = new DepartmentViewModel();
+
+                string sql = @"SELECT d.Id, 
+                                        d.Name, 
+                                        d.Budget, 
+                                        count(e.Id)
+                                   FROM Department d
+                                   join Employee e on d.Id = e.DepartmentId 
+                                   group by d.Id, d.Name, d.Budget
+                                   ";
+
+
+                IEnumerable<Department> depoWithEmpCount = await conn.QueryAsync<Department, Employee, Department>(
+                                    sql,
+
+                                       (generatedDepo, generatedEmp) =>
+                                       {
+                                           if (model.department == null)
+                                           {
+                                               model.department = generatedDepo;
+                            
+                                               model.employeeCount = generatedEmp.Id;
+                                           }
+
+                                           return generatedDepo;
+
+
+                                       });
+                                       return View(model)
+
+
+                ;
+            }
+
+    /*
+            using (IDbConnection conn = Connection)
+            {
                 IEnumerable<Department> departments = await conn.QueryAsync<Department>(sql);
 
                 return View(departments);
             }
-        }
+            */
+        } 
 
         public async Task<IActionResult> Details(int? id) 
         {
