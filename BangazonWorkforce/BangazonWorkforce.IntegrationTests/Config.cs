@@ -6,7 +6,7 @@
         {
             get
             {
-                return "__PLACE CONNECTION STRING HERE__";
+                return "server=Data Source=DESKTOP-E27V8UQ\\SQLEXPRESS;Initial Catalog=BanagzonAPI;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             }
         }
     }

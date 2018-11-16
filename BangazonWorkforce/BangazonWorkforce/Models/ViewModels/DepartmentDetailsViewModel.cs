@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BangazonWorkforce.Models.ViewModels
 {
@@ -12,6 +11,6 @@ namespace BangazonWorkforce.Models.ViewModels
 
         public int Budget { get; set; }
 
-        public List<Employee> Employees { get; set; } = new List<Employee>();
+        public List<Employee> Employees { get; set; }
     }
 }
