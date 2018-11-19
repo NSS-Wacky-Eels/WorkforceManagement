@@ -39,7 +39,7 @@ namespace BangazonWorkforce.Controllers
                                         d.Budget, 
                                         count(e.Id) TotalEmployees
                                    FROM Department d
-                                   join Employee e on d.Id = e.DepartmentId 
+                                   left join Employee e on d.Id = e.DepartmentId 
                                    group by d.Id, d.Name, d.Budget
                                    ";
 

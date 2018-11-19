@@ -24,7 +24,7 @@ namespace BangazonWorkforce.IntegrationTests
         {
             // Arrange
             string url = "/department";
-            
+
             // Act
             HttpResponseMessage response = await _client.GetAsync(url);
 
@@ -32,6 +32,19 @@ namespace BangazonWorkforce.IntegrationTests
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.Equal("text/html; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
+            IHtmlDocument indexPage = await HtmlHelpers.GetDocumentAsync(response);
+            var firstRow = indexPage.QuerySelector("tbody tr:first-child");
+
+
+
+            Assert.Contains(firstRow.QuerySelectorAll("td"),
+            td => td.TextContent.Contains("Navy"));
+            Assert.Contains(firstRow.QuerySelectorAll("td"),
+            td => td.TextContent.Contains("400000000"));
+            Assert.Contains(firstRow.QuerySelectorAll("td"),
+            td => td.TextContent.Contains("5"));
+
+
         }
 
         [Fact]
@@ -67,5 +80,6 @@ namespace BangazonWorkforce.IntegrationTests
                 indexPage.QuerySelectorAll("td"), 
                 td => td.TextContent.Contains(newDepartmentBudget));
         }
+
     }
 }
