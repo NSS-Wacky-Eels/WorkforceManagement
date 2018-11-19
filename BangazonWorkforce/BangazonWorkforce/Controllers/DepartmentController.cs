@@ -33,49 +33,23 @@ namespace BangazonWorkforce.Controllers
 
             using (IDbConnection conn = Connection)
             {
-                Dictionary<int, Department> report = new Dictionary<int, Department>();
-                DepartmentViewModel model = new DepartmentViewModel();
 
                 string sql = @"SELECT d.Id, 
                                         d.Name, 
                                         d.Budget, 
-                                        count(e.Id)
+                                        count(e.Id) TotalEmployees
                                    FROM Department d
                                    join Employee e on d.Id = e.DepartmentId 
                                    group by d.Id, d.Name, d.Budget
                                    ";
 
 
-                IEnumerable<Department> depoWithEmpCount = await conn.QueryAsync<Department, Employee, Department>(
-                                    sql,
+                IEnumerable<Department> depoWithEmpCount = await conn.QueryAsync<Department>(sql);
+                DepartmentViewModel model = new DepartmentViewModel();
 
-                                       (generatedDepo, generatedEmp) =>
-                                       {
-                                           if (model.department == null)
-                                           {
-                                               model.department = generatedDepo;
-                            
-                                               model.employeeCount = generatedEmp.Id;
-                                           }
-
-                                           return generatedDepo;
-
-
-                                       });
-                                       return View(model)
-
-
-                ;
+                model.departments = depoWithEmpCount.ToList();
+                return View(model);
             }
-
-    /*
-            using (IDbConnection conn = Connection)
-            {
-                IEnumerable<Department> departments = await conn.QueryAsync<Department>(sql);
-
-                return View(departments);
-            }
-            */
         } 
 
         public async Task<IActionResult> Details(int? id) 

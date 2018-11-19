@@ -10,9 +10,7 @@ namespace BangazonWorkforce.Models
     public class DepartmentViewModel
     {
 
-        public Department department { get; set; }
-
-        public int employeeCount { get; set; }
+        public List<Department> departments { get; set; }
 
     }
 }
