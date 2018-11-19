@@ -360,7 +360,6 @@ namespace BangazonWorkforce.Controllers
                                 FROM TrainingProgram tp";
 
                 IEnumerable<TrainingProgram> trainingPrograms = await conn.QueryAsync<TrainingProgram>(sql);
-                Console.WriteLine("What Type?", trainingPrograms.ToList().GetType());
                 return trainingPrograms.ToList();
             }
         }
