@@ -181,17 +181,39 @@ namespace BangazonWorkforce.Controllers
             }
 
             List<Department> allDepartments = await GetAllDepartments();
+
+            List<Computer> allComputers = await GetAllAvailableComputers();
+
+            List<TrainingProgram> allTrainingPrograms = await GetAllTrainingPrograms();
+
+            List<TrainingProgram> employeeTrainingPrograms = await GetAllChosenTrainingPrograms(id.Value);
+
             Employee employee = await GetById(id.Value);
+
+            Computer computer = await GetEmployeeComputer(id.Value);
+
             if (employee == null)
             {
                 return NotFound();
             }
 
-            EmployeeAddEditViewModel viewmodel = new EmployeeAddEditViewModel
+            EmployeeEditViewModel viewmodel = new EmployeeEditViewModel
             {
                 Employee = employee,
-                AllDepartments = allDepartments
+                AllDepartments = allDepartments,
+                AllComputers = allComputers,
+                AllTrainingPrograms = allTrainingPrograms
             };
+
+            if (computer != null)
+            {
+                viewmodel.Computer = computer;
+            }
+
+            if (employeeTrainingPrograms != null)
+            {
+                viewmodel.EmployeeChosenTrainingPrograms = employeeTrainingPrograms;
+            }
 
             return View(viewmodel);
         }
@@ -295,6 +317,68 @@ namespace BangazonWorkforce.Controllers
 
                 IEnumerable<Department> departments = await conn.QueryAsync<Department>(sql);
                 return departments.ToList();
+            }
+        }
+
+        private async Task<List<Computer>> GetAllAvailableComputers()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"SELECT c.Id,
+                                        c.Make
+                                FROM Computer c
+                                LEFT JOIN ComputerEmployee ce ON c.Id = ce.ComputerId
+                                WHERE ce.ComputerId IS NULL
+                                AND c.DecomissionDate IS NULL";
+
+                IEnumerable<Computer> computers = await conn.QueryAsync<Computer>(sql);
+                return computers.ToList();
+            }
+        }
+
+        private async Task<Computer> GetEmployeeComputer(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"SELECT c.Id,
+                                        c.Make
+                                FROM Computer c
+                                WHERE c.Id = {id}";
+
+                Computer computer = await conn.QueryFirstAsync<Computer>(sql);
+                return computer;
+            }
+        }
+
+        private async Task<List<TrainingProgram>> GetAllTrainingPrograms()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"SELECT tp.Id, 
+                                        tp.Name, 
+                                        tp.StartDate
+                                FROM TrainingProgram tp";
+
+                IEnumerable<TrainingProgram> trainingPrograms = await conn.QueryAsync<TrainingProgram>(sql);
+                Console.WriteLine("What Type?", trainingPrograms.ToList().GetType());
+                return trainingPrograms.ToList();
+            }
+        }
+
+        private async Task<List<TrainingProgram>> GetAllChosenTrainingPrograms(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"SELECT tp.Id, 
+                                        tp.Name, 
+                                        tp.StartDate
+                                FROM TrainingProgram tp
+                                JOIN EmployeeTraining et ON et.TrainingProgramId = tp.Id
+                                JOIN Employee e ON e.Id = et.EmployeeId
+                                WHERE e.Id = {id}";
+
+                IEnumerable<TrainingProgram> trainingPrograms = await conn.QueryAsync<TrainingProgram>(sql);
+                return trainingPrograms.ToList();
             }
         }
     }

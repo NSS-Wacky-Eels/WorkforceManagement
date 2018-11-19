@@ -29,7 +29,7 @@ namespace BangazonWorkforce.Models.ViewModels
         // List of the selected Training Programs Ids
         public List<int> SelectedTrainingProgramsIds { get; set; }
         // List of already chosen Training Programs Ids by the employee
-        public List<int> PreSelectedTrainingPrograms { get; set; }
+        public List<int> PreSelectedTrainingProgramsIds { get; set; }
 
         //public EmployeeEditViewModel() { }
 
@@ -91,6 +91,37 @@ namespace BangazonWorkforce.Models.ViewModels
 
                 return ComputerOptions;
             }
+        }
+
+        public List<SelectListItem> AllTrainingProgramOptions
+        {
+            get
+            {
+                if (AllTrainingPrograms == null)
+                {
+                    return null;
+                }
+                // Setting PreSelected to hold all the employee training programs ids to clean up the list
+                PreSelectedTrainingProgramsIds = EmployeeChosenTrainingPrograms.Select((tp) => tp.Id).ToList();
+
+                // All options are set to only the Name and Id for the all training programs
+                List<SelectListItem> allOptions = AllTrainingPrograms
+                    .Select((tp) => new SelectListItem(tp.Name, tp.Id.ToString()))
+                    .ToList();
+
+                // First foreach is going throught the PreSelected Program Ids then entering another foreach for allOptions to match the training program Id with the select list item value (value means the id) and if they match set Selected property to true
+                foreach (int Id in PreSelectedTrainingProgramsIds) {
+                    foreach (SelectListItem sli in allOptions) {
+                        if (sli.Value == Id.ToString())
+                        {
+                            sli.Selected = true;
+                        }
+                    }
+                }
+
+                return allOptions;
+            }
+
         }
 
 
