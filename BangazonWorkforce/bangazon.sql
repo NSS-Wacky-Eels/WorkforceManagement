@@ -397,12 +397,12 @@ VALUES
 INSERT INTO TrainingProgram 
 ([Name], StartDate, EndDate, MaxAttendees) 
 VALUES 
-('Do not be an asshole', '170418 10:34:09 AM', '180618 10:34:09 AM', 15);
+('Do not be an asshole', '181218 10:34:09 AM', '190618 10:34:09 AM', 15);
 
 INSERT INTO TrainingProgram 
 ([Name], StartDate, EndDate, MaxAttendees) 
 VALUES 
-('Cat cuddling techniques', '170417 07:34:09 AM', '080917 10:34:09 AM', 25);
+('Cat cuddling techniques', '181224 07:34:09 AM', '190917 10:34:09 AM', 25);
 
 INSERT INTO TrainingProgram 
 ([Name], StartDate, EndDate, MaxAttendees) 

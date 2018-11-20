@@ -107,6 +107,7 @@ namespace BangazonWorkforce.Controllers
 
                         if (model.DepartmentName == null)
                         {
+                            model.Id = emp.Id;
                             model.FirstName = emp.FirstName;
                             model.LastName = emp.LastName;
                             model.DepartmentName = department.Name;
@@ -171,6 +172,11 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        /*
+            Author: Kayla Reid and Taylor Gulley
+            Description: Gets the relavent infomation for the Employee to Edit. This includes the departments, training programs computers.
+        */
+
         // GET: Employee/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -180,17 +186,39 @@ namespace BangazonWorkforce.Controllers
             }
 
             List<Department> allDepartments = await GetAllDepartments();
+
+            List<Computer> allComputers = await GetAllAvailableComputers();
+
+            List<TrainingProgram> allTrainingPrograms = await GetAllTrainingPrograms();
+
+            List<TrainingProgram> employeeTrainingPrograms = await GetAllChosenTrainingPrograms(id.Value);
+
             Employee employee = await GetById(id.Value);
+
+            Computer computer = await GetEmployeeComputer(id.Value);
+
             if (employee == null)
             {
                 return NotFound();
             }
 
-            EmployeeAddEditViewModel viewmodel = new EmployeeAddEditViewModel
+            EmployeeEditViewModel viewmodel = new EmployeeEditViewModel
             {
                 Employee = employee,
-                AllDepartments = allDepartments
+                AllDepartments = allDepartments,
+                AllComputers = allComputers,
+                AllTrainingPrograms = allTrainingPrograms
             };
+
+            if (computer != null)
+            {
+                viewmodel.Computer = computer;
+            }
+
+            if (employeeTrainingPrograms != null)
+            {
+                viewmodel.EmployeeChosenTrainingPrograms = employeeTrainingPrograms;
+            }
 
             return View(viewmodel);
         }
@@ -200,7 +228,7 @@ namespace BangazonWorkforce.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EmployeeAddEditViewModel viewmodel)
+        public async Task<IActionResult> Edit(int id, EmployeeEditViewModel viewmodel)
         {
             if (id != viewmodel.Employee.Id)
             {
@@ -213,8 +241,16 @@ namespace BangazonWorkforce.Controllers
                 viewmodel.AllDepartments = allDepartments;
                 return View(viewmodel);
             }
-
+            //getting employee from view and setting it to this employee instance
             Employee employee = viewmodel.Employee;
+
+            List<int> employeeTrainingPrograms = viewmodel.SelectedTrainingProgramsIds;
+
+            //Get the selected computer
+            Computer computer = viewmodel.Computer;
+
+            //get the employee computer
+            Computer employeeComputer = await GetEmployeeComputer(employee.Id);
 
             using (IDbConnection conn = Connection)
             {
@@ -224,8 +260,45 @@ namespace BangazonWorkforce.Controllers
                                        IsSupervisor = {(employee.IsSupervisor ? 1 : 0)},
                                        DepartmentId = {employee.DepartmentId}
                                  WHERE id = {id}";
+                 //setting empty var
+                string computerResetSql = "";
+                //setting empty var
+                string computerAddSql = "";
+
+                if (computer.Id != 0 && computer.Id != employee.Id)
+                {   
+                    //building up var based on if statement
+                    computerResetSql = $@"DELETE FROM ComputerEmployee WHERE EmployeeId = {employee.Id};";
+                    //building up var based on if statement
+                    computerAddSql = $@"INSERT INTO ComputerEmployee
+                                      (ComputerId, EmployeeId, AssignDate)
+                                      VALUES
+                                      ({ computer.Id }, { employee.Id }, '{DateTime.Now}');";
+                }
+
+                string trainingResetSql = $@"DELETE FROM EmployeeTraining WHERE EmployeeId = {employee.Id};";
+                //setting empty var
+                string trainingAddSql = "";
+
+                //if a Training Program was selected do this else do nothing
+                if (employeeTrainingPrograms != null)
+                { 
+                    foreach (int num in employeeTrainingPrograms)
+                    {
+                        //foreach training Program selected build up this var to hold all the needed slq insert statments
+                        trainingAddSql = trainingAddSql + $@"
+                        INSERT INTO EmployeeTraining
+                        (EmployeeId, TrainingProgramId)
+                        VALUES 
+                        ({ employee.Id }, { num });";
+                    }
+                }
+
+                //add up all the sql statements and send them off in one go to the db
+                sql = sql + computerResetSql + computerAddSql + trainingResetSql + trainingAddSql;
 
                 await conn.ExecuteAsync(sql);
+
                 return RedirectToAction(nameof(Index));
             }
         }
@@ -294,6 +367,99 @@ namespace BangazonWorkforce.Controllers
 
                 IEnumerable<Department> departments = await conn.QueryAsync<Department>(sql);
                 return departments.ToList();
+            }
+        }
+
+        /*
+            Author: Kayla Reed and Taylor Gulley
+            Description: A private function using a sql statment to return computers that are not assigned to an employee
+        */
+        private async Task<List<Computer>> GetAllAvailableComputers()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"SELECT c.Id,
+                                        c.Make
+                                FROM Computer c
+                                LEFT JOIN ComputerEmployee ce ON c.Id = ce.ComputerId
+                                WHERE ce.ComputerId IS NULL
+                                AND c.DecomissionDate IS NULL";
+
+                IEnumerable<Computer> computers = await conn.QueryAsync<Computer>(sql);
+                return computers.ToList();
+            }
+        }
+
+        /*
+            Author: Kayla Reed and Taylor Gulley
+            Description: A private function using a sql statment to return the computer assigned to the employee
+        */
+        private async Task<Computer> GetEmployeeComputer(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"SELECT c.Id,
+                                        c.Make
+                                FROM Employee e 
+                                LEFT JOIN ComputerEmployee ce ON ce.EmployeeId = e.Id
+                                LEFT JOIN Computer c ON c.Id = ce.ComputerId
+                                WHERE e.Id = {id}";
+
+                Computer computer = await conn.QueryFirstAsync<Computer>(sql);
+                return computer;
+            }
+        }
+
+        /*private async Task<Computer> GetComputerById(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"SELECT c.Id,
+                                        c.Make,
+                                FROM Computer c
+                                WHERE c.Id = {id}";
+
+                Computer computer = await conn.QueryFirstAsync<Computer>(sql);
+                return computer;
+            }
+        }*/
+
+        /*
+            Author: Kayla Reed and Taylor Gulley
+            Description: A private function using a sql statment to return all training programs
+        */
+        private async Task<List<TrainingProgram>> GetAllTrainingPrograms()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"SELECT tp.Id, 
+                                        tp.Name, 
+                                        tp.StartDate
+                                FROM TrainingProgram tp";
+
+                IEnumerable<TrainingProgram> trainingPrograms = await conn.QueryAsync<TrainingProgram>(sql);
+                return trainingPrograms.ToList();
+            }
+        }
+
+        /*
+            Author: Kayla Reed and Taylor Gulley
+            Description: A private function using a sql statment to return training programs that the employee has chosen
+        */
+        private async Task<List<TrainingProgram>> GetAllChosenTrainingPrograms(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"SELECT tp.Id, 
+                                        tp.Name, 
+                                        tp.StartDate
+                                FROM TrainingProgram tp
+                                JOIN EmployeeTraining et ON et.TrainingProgramId = tp.Id
+                                JOIN Employee e ON e.Id = et.EmployeeId
+                                WHERE e.Id = {id}";
+
+                IEnumerable<TrainingProgram> trainingPrograms = await conn.QueryAsync<TrainingProgram>(sql);
+                return trainingPrograms.ToList();
             }
         }
     }
