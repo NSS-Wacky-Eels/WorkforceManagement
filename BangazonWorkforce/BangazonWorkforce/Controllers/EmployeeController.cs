@@ -173,7 +173,7 @@ namespace BangazonWorkforce.Controllers
         }
 
         /*
-            Author: Kayla Reed and Taylor Gulley
+            Author: Kayla Reid and Taylor Gulley
             Description: Gets the relavent infomation for the Employee to Edit. This includes the departments, training programs computers.
         */
 
@@ -228,7 +228,7 @@ namespace BangazonWorkforce.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EmployeeAddEditViewModel viewmodel)
+        public async Task<IActionResult> Edit(int id, EmployeeEditViewModel viewmodel)
         {
             if (id != viewmodel.Employee.Id)
             {
@@ -241,8 +241,15 @@ namespace BangazonWorkforce.Controllers
                 viewmodel.AllDepartments = allDepartments;
                 return View(viewmodel);
             }
-
+            //getting employee from view and setting it to this employee instance
             Employee employee = viewmodel.Employee;
+
+            List<int> employeeTrainingPrograms = viewmodel.SelectedTrainingProgramsIds;
+
+            //Get the selected computer
+            Computer computer = viewmodel.Computer;
+            //get the employee computer
+            Computer employeeComputer = await GetEmployeeComputer(employee.Id);
 
             using (IDbConnection conn = Connection)
             {
@@ -252,8 +259,41 @@ namespace BangazonWorkforce.Controllers
                                        IsSupervisor = {(employee.IsSupervisor ? 1 : 0)},
                                        DepartmentId = {employee.DepartmentId}
                                  WHERE id = {id}";
+                 //setting empty var
+                string computerResetSql = "";
+                //setting empty var
+                string computerAddSql = "";
+
+                if (computer.Id != 0 && computer.Id != employee.Id)
+                {   
+                    //building up var based on if statement
+                    computerResetSql = $@"DELETE FROM ComputerEmployee WHERE EmployeeId = {employee.Id};";
+                    //building up var based on if statement
+                    computerAddSql = $@"INSERT INTO ComputerEmployee
+                                      (ComputerId, EmployeeId, AssignDate)
+                                      VALUES
+                                      ({ computer.Id }, { employee.Id }, '{DateTime.Now}');";
+                }
+
+                string trainingResetSql = $@"DELETE FROM EmployeeTraining WHERE EmployeeId = {employee.Id};";
+                //setting empty var
+                string trainingAddSql = "";
+
+                foreach (int num in employeeTrainingPrograms)
+                {
+                    //foreach training Program selected build up this var to hold all the needed slq insert statments
+                    trainingAddSql = trainingAddSql + $@"
+                    INSERT INTO EmployeeTraining
+                    (EmployeeId, TrainingProgramId)
+                    VALUES 
+                    ({ employee.Id }, { num });";
+                }
+
+                //add up all the sql statements and send them off in one go to the db
+                sql = sql + computerResetSql + computerAddSql + trainingResetSql + trainingAddSql;
 
                 await conn.ExecuteAsync(sql);
+
                 return RedirectToAction(nameof(Index));
             }
         }

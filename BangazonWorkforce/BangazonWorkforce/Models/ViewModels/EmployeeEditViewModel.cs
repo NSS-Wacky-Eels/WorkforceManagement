@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using BangazonWorkforce.Controllers;
 
 /*
-    Author: Kayla Reed and  Taylor Gulley
+    Author: Kayla Reid and  Taylor Gulley
     Description: View Model for editing an Employee
  */
 namespace BangazonWorkforce.Models.ViewModels
