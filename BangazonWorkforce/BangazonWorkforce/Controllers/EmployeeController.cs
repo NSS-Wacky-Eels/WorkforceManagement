@@ -280,6 +280,7 @@ namespace BangazonWorkforce.Controllers
                 //setting empty var
                 string trainingAddSql = "";
 
+                //if a Training Program was selected do this else do nothing
                 if (employeeTrainingPrograms != null)
                 { 
                     foreach (int num in employeeTrainingPrograms)
