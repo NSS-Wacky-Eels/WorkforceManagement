@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using BangazonWorkforce.Models;
+using BangazonWorkforce.Models.ViewModels;
 
 namespace BangazonWorkforce.Controllers
 {
@@ -27,30 +28,77 @@ namespace BangazonWorkforce.Controllers
             _config = config;
         }
 
+        
         public async Task<IActionResult> Index()
         {
+
             using (IDbConnection conn = Connection)
             {
-                string sql = "SELECT Id, Name, Budget FROM Department";
-                IEnumerable<Department> departments = await conn.QueryAsync<Department>(sql);
 
-                return View(departments);
+                string sql = @"SELECT d.Id, 
+                                        d.Name, 
+                                        d.Budget, 
+                                        count(e.Id) TotalEmployees
+                                   FROM Department d
+                                   left join Employee e on d.Id = e.DepartmentId 
+                                   group by d.Id, d.Name, d.Budget
+                                   ";
+
+
+                IEnumerable<Department> depoWithEmpCount = await conn.QueryAsync<Department>(sql);
+                DepartmentViewModel model = new DepartmentViewModel();
+
+                model.departments = depoWithEmpCount.ToList();
+                return View(model);
             }
-        }
+        } 
 
-        public async Task<IActionResult> Details(int? id) 
+        // Details Page
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Department department = await GetById(id.Value);
-            if (department == null)
+            using (IDbConnection conn = Connection)
             {
-                return NotFound();
+                string sql = $@"
+                     SELECT
+                            d.Id,
+                            d.[Name],
+                            d.Budget,
+                            e.Id,
+                            e.FirstName,
+                            e.LastName,
+                            e.DepartmentId,
+                            e.IsSuperVisor
+                        FROM Department d
+                        LEFT JOIN Employee e ON e.DepartmentId = d.Id 
+                        WHERE d.Id = {id}                   
+                    ";
+                DepartmentDetailsViewModel model = new DepartmentDetailsViewModel();
+
+                IEnumerable<DepartmentDetailsViewModel> queriedDepartment = await conn.QueryAsync<DepartmentDetailsViewModel, Employee, DepartmentDetailsViewModel>(
+                    sql,
+                    (dept, emp) =>
+                    {
+
+                        if (model.Name == null)
+                        {
+                            model.Name = dept.Name;
+                            model.Budget = dept.Budget;
+                        }
+
+                        if (!model.AllEmployees.Contains(emp))
+                        {
+                            model.AllEmployees.Add(emp);
+                        }
+
+                        return dept;
+                    });
+                return View(model);
             }
-            return View(department);
         }
 
         // GET: Department/Create
