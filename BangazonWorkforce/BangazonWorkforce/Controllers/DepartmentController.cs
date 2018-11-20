@@ -74,7 +74,7 @@ namespace BangazonWorkforce.Controllers
                             e.DepartmentId,
                             e.IsSuperVisor
                         FROM Department d
-                        JOIN Employee e ON e.DepartmentId = d.Id 
+                        LEFT JOIN Employee e ON e.DepartmentId = d.Id 
                         WHERE d.Id = {id}                   
                     ";
                 DepartmentDetailsViewModel model = new DepartmentDetailsViewModel();
