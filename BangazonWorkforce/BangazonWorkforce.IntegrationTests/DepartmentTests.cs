@@ -1,8 +1,13 @@
 using AngleSharp.Dom.Html;
 using BangazonWorkforce.IntegrationTests.Helpers;
+using BangazonWorkforce.Models;
+using Dapper;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -23,7 +28,12 @@ namespace BangazonWorkforce.IntegrationTests
         public async Task Get_IndexReturnsSuccessAndCorrectContentType()
         {
             // Arrange
+            Department department = (await GetAllDepartments()).First();
             string url = "/department";
+
+            string firstDepoName = department.Name;
+            int firstDepoBudget = department.Budget;
+            int firstDepoTotalEmp = department.TotalEmployees;
 
             // Act
             HttpResponseMessage response = await _client.GetAsync(url);
@@ -38,11 +48,11 @@ namespace BangazonWorkforce.IntegrationTests
 
 
             Assert.Contains(firstRow.QuerySelectorAll("td"),
-            td => td.TextContent.Contains("Navy"));
+            td => td.TextContent.Contains(firstDepoName));
             Assert.Contains(firstRow.QuerySelectorAll("td"),
-            td => td.TextContent.Contains("400000000"));
+            td => td.TextContent.Contains(firstDepoBudget.ToString()));
             Assert.Contains(firstRow.QuerySelectorAll("td"),
-            td => td.TextContent.Contains("5"));
+            td => td.TextContent.Contains(firstDepoTotalEmp.ToString()));
 
 
         }
@@ -79,6 +89,16 @@ namespace BangazonWorkforce.IntegrationTests
             Assert.Contains(
                 indexPage.QuerySelectorAll("td"), 
                 td => td.TextContent.Contains(newDepartmentBudget));
+        }
+
+        private async Task<List<Department>> GetAllDepartments()
+        {
+            using (IDbConnection conn = new SqlConnection(Config.ConnectionSring))
+            {
+                IEnumerable<Department> allDepartments =
+                    await conn.QueryAsync<Department>(@"SELECT Id, Name, Budget FROM Department");
+                return allDepartments.ToList();
+            }
         }
 
     }
