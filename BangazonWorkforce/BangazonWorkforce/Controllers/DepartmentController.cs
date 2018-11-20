@@ -27,16 +27,30 @@ namespace BangazonWorkforce.Controllers
             _config = config;
         }
 
+        
         public async Task<IActionResult> Index()
         {
+
             using (IDbConnection conn = Connection)
             {
-                string sql = "SELECT Id, Name, Budget FROM Department";
-                IEnumerable<Department> departments = await conn.QueryAsync<Department>(sql);
 
-                return View(departments);
+                string sql = @"SELECT d.Id, 
+                                        d.Name, 
+                                        d.Budget, 
+                                        count(e.Id) TotalEmployees
+                                   FROM Department d
+                                   left join Employee e on d.Id = e.DepartmentId 
+                                   group by d.Id, d.Name, d.Budget
+                                   ";
+
+
+                IEnumerable<Department> depoWithEmpCount = await conn.QueryAsync<Department>(sql);
+                DepartmentViewModel model = new DepartmentViewModel();
+
+                model.departments = depoWithEmpCount.ToList();
+                return View(model);
             }
-        }
+        } 
 
         public async Task<IActionResult> Details(int? id) 
         {
