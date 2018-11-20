@@ -172,6 +172,11 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        /*
+            Author: Kayla Reed and Taylor Gulley
+            Description: Gets the relavent infomation for the Employee to Edit. This includes the departments, training programs computers.
+        */
+
         // GET: Employee/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -320,6 +325,10 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        /*
+            Author: Kayla Reed and Taylor Gulley
+            Description: A private function using a sql statment to return computers that are not assigned to an employee
+        */
         private async Task<List<Computer>> GetAllAvailableComputers()
         {
             using (IDbConnection conn = Connection)
@@ -336,6 +345,10 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        /*
+            Author: Kayla Reed and Taylor Gulley
+            Description: A private function using a sql statment to return the computer assigned to the employee
+        */
         private async Task<Computer> GetEmployeeComputer(int id)
         {
             using (IDbConnection conn = Connection)
@@ -350,6 +363,10 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        /*
+            Author: Kayla Reed and Taylor Gulley
+            Description: A private function using a sql statment to return all training programs
+        */
         private async Task<List<TrainingProgram>> GetAllTrainingPrograms()
         {
             using (IDbConnection conn = Connection)
@@ -364,6 +381,10 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        /*
+            Author: Kayla Reed and Taylor Gulley
+            Description: A private function using a sql statment to return training programs that the employee has chosen
+        */
         private async Task<List<TrainingProgram>> GetAllChosenTrainingPrograms(int id)
         {
             using (IDbConnection conn = Connection)
