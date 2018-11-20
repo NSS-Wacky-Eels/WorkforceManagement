@@ -248,6 +248,7 @@ namespace BangazonWorkforce.Controllers
 
             //Get the selected computer
             Computer computer = viewmodel.Computer;
+
             //get the employee computer
             Computer employeeComputer = await GetEmployeeComputer(employee.Id);
 
@@ -279,14 +280,17 @@ namespace BangazonWorkforce.Controllers
                 //setting empty var
                 string trainingAddSql = "";
 
-                foreach (int num in employeeTrainingPrograms)
-                {
-                    //foreach training Program selected build up this var to hold all the needed slq insert statments
-                    trainingAddSql = trainingAddSql + $@"
-                    INSERT INTO EmployeeTraining
-                    (EmployeeId, TrainingProgramId)
-                    VALUES 
-                    ({ employee.Id }, { num });";
+                if (employeeTrainingPrograms != null)
+                { 
+                    foreach (int num in employeeTrainingPrograms)
+                    {
+                        //foreach training Program selected build up this var to hold all the needed slq insert statments
+                        trainingAddSql = trainingAddSql + $@"
+                        INSERT INTO EmployeeTraining
+                        (EmployeeId, TrainingProgramId)
+                        VALUES 
+                        ({ employee.Id }, { num });";
+                    }
                 }
 
                 //add up all the sql statements and send them off in one go to the db
@@ -395,13 +399,29 @@ namespace BangazonWorkforce.Controllers
             {
                 string sql = $@"SELECT c.Id,
                                         c.Make
+                                FROM Employee e 
+                                LEFT JOIN ComputerEmployee ce ON ce.EmployeeId = e.Id
+                                LEFT JOIN Computer c ON c.Id = ce.ComputerId
+                                WHERE e.Id = {id}";
+
+                Computer computer = await conn.QueryFirstAsync<Computer>(sql);
+                return computer;
+            }
+        }
+
+        /*private async Task<Computer> GetComputerById(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $@"SELECT c.Id,
+                                        c.Make,
                                 FROM Computer c
                                 WHERE c.Id = {id}";
 
                 Computer computer = await conn.QueryFirstAsync<Computer>(sql);
                 return computer;
             }
-        }
+        }*/
 
         /*
             Author: Kayla Reed and Taylor Gulley

@@ -26,12 +26,16 @@ namespace BangazonWorkforce.Models.ViewModels
         public Computer Computer { get; set; }
 
         public List<Department> AllDepartments { get; set; }
+
         //List of all training programs
         public List<TrainingProgram> AllTrainingPrograms { get; set; }
+
         //List of the training programs the employee has chosen
         public List<TrainingProgram> EmployeeChosenTrainingPrograms { get; set; }
+
         // List of the selected Training Programs Ids
         public List<int> SelectedTrainingProgramsIds { get; set; }
+
         // List of already chosen Training Programs Ids by the employee
         public List<int> PreSelectedTrainingProgramsIds { get; set; }
 
